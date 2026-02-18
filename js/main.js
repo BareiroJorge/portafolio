@@ -65,3 +65,81 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Console welcome message
 console.log('%c¡Bienvenido al portafolio de Jorge Bareiro!', 'color: #2563eb; font-size: 20px; font-weight: bold;');
 console.log('%cAK Solutions PY - https://www.aksolutionspy.com/', 'color: #10b981; font-size: 14px;');
+
+// Modal functionality for portfolio images
+const modal = document.getElementById('imageModal');
+const modalImg = document.getElementById('modalImage');
+const modalTitle = document.getElementById('modalTitle');
+const modalDescription = document.getElementById('modalDescription');
+const closeBtn = document.querySelector('.modal-close');
+const prevBtn = document.getElementById('modalPrev');
+const nextBtn = document.getElementById('modalNext');
+
+let currentImageIndex = 0;
+let portfolioItems = [];
+
+// Initialize portfolio items
+document.addEventListener('DOMContentLoaded', () => {
+    portfolioItems = Array.from(document.querySelectorAll('.portfolio-item'));
+    
+    portfolioItems.forEach((item, index) => {
+        item.addEventListener('click', () => {
+            openModal(index);
+        });
+    });
+});
+
+function openModal(index) {
+    currentImageIndex = index;
+    const item = portfolioItems[index];
+    const imageSrc = item.getAttribute('data-image');
+    const title = item.getAttribute('data-title');
+    const description = item.getAttribute('data-description');
+    
+    modalImg.src = imageSrc;
+    modalTitle.textContent = title;
+    modalDescription.textContent = description;
+    
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+function showPrevImage() {
+    currentImageIndex = (currentImageIndex - 1 + portfolioItems.length) % portfolioItems.length;
+    openModal(currentImageIndex);
+}
+
+function showNextImage() {
+    currentImageIndex = (currentImageIndex + 1) % portfolioItems.length;
+    openModal(currentImageIndex);
+}
+
+// Event listeners
+closeBtn.addEventListener('click', closeModal);
+prevBtn.addEventListener('click', showPrevImage);
+nextBtn.addEventListener('click', showNextImage);
+
+// Close modal when clicking outside the image
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+        closeModal();
+    }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (modal.classList.contains('show')) {
+        if (e.key === 'Escape') {
+            closeModal();
+        } else if (e.key === 'ArrowLeft') {
+            showPrevImage();
+        } else if (e.key === 'ArrowRight') {
+            showNextImage();
+        }
+    }
+});
